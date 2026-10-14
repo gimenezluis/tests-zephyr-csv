@@ -14,7 +14,7 @@ Página web simples para criar cenários de teste (em Gherkin) e baixar um **CSV
 5. Em **Mapeamento de Campos** os campos já vêm ligados, porque os cabeçalhos do CSV têm o mesmo nome dos campos do Zephyr. Só confira e clique em **Próximo**. Escolha no gerador o idioma do seu Jira (Português ou English).
 6. Clique em **Import** e confira a tela de resultados.
 
-**Pasta:** deixe "Subpasta" vazia para os testes caírem na pasta escolhida na importação (ex.: a pasta da sprint).
+**Pasta:** em "Subpasta: ID da tarefa", informe o ID da tarefa do Jira (ex.: `Tarefa-ID`). Os cenários ficam numa subpasta com esse nome, dentro da pasta escolhida na importação (ex.: a pasta da sprint). Vazio = direto na pasta escolhida.
 
 **Evidências:** não entram pela importação. Anexe os prints na execução do teste, dentro do Test Cycle. Padrão de nome: `{chave-do-teste}_{ambiente}_{AAAA-MM-DD}.png`.
 
@@ -48,7 +48,7 @@ Os cabeçalhos ficam no topo do `index.html`, no objeto `HEAD`. Se algum campo n
 | Status | Status | Não | Draft, Approved |
 | Rótulos | Labels | Não | smoke, regressao, automatizado, manual |
 | Cobertura (Itens de trabalho) | Coverage | Não | Chave da história no Jira (ex.: PROJ-123) |
-| Pasta | Folder | Não | Subpasta. Vazio = pasta escolhida na importação |
+| Pasta | Folder | Não | ID da tarefa (ex.: Tarefa-ID). Vazio = pasta escolhida na importação |
 | Precondição | Precondition | Não | Ambiente, usuário de teste, estado da massa |
 | Script de Teste (Passo-a-Passo) - Passo | Test Script (Steps) - Step | Não | Passos "Dado / E / Quando", um por linha |
 | Script de Teste (Passo-a-Passo) - Resultado Esperado | Test Script (Steps) - Expected Result | Não | Linhas "Então / E" |
