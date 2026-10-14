@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="pt-br"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gerador de cenários Zephyr</title>
+<style>
+:root{--bg:#f6f5f0;--card:#fff;--ink:#14213d;--muted:#5a6475;--line:#dce0e6;--acc:#2f7a4d;--acc2:#e3f1e8;--warn:#b4561a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,Segoe UI,Roboto,Arial,sans-serif;padding:24px 16px}
+.wrap{max-width:980px;margin:0 auto}h1{font-size:24px;margin:0 0 4px}p.sub{color:var(--muted);margin:0 0 20px}
+.steps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}.steps span{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:6px 12px;font-size:13px}
+.steps b{color:var(--acc)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px}
+.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.head h2{font-size:17px;margin:0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:4px}label small{font-weight:400;color:var(--muted)}
+input,select,textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:inherit;background:#fff;color:var(--ink)}
+textarea{min-height:90px;font-family:ui-monospace,Consolas,monospace;font-size:13px}
+.btn{border:0;border-radius:8px;padding:10px 16px;font-weight:600;cursor:pointer;font-size:14px}
+.pri{background:var(--acc);color:#fff}.sec{background:#fff;border:1px solid var(--line);color:var(--ink)}.del{background:none;color:var(--warn);border:0;cursor:pointer;font-weight:600}
+.bar{display:flex;gap:10px;flex-wrap:wrap;position:sticky;bottom:0;background:var(--bg);padding:12px 0}
+.tip{background:var(--acc2);border-radius:10px;padding:12px 14px;font-size:14px;margin-bottom:16px}
+.err{border-color:var(--warn)!important}
+@media(max-width:640px){.grid{grid-template-columns:1fr}}
+</style></head><body><div class="wrap">
+<h1>Gerador de cenários de teste para o Zephyr</h1>
+<p class="sub">Preencha os cenários, clique em <b>Baixar CSV</b> e importe no Zephyr. Sem Excel e sem conversão.</p>
+<div class="steps"><span><b>1</b> Preencher</span><span><b>2</b> Baixar CSV</span><span><b>3</b> Zephyr › Test Cases › More › Import from File › Excel CSV</span><span><b>4</b> UTF-8 · separador vírgula · os campos já vêm mapeados</span></div>
+<div class="tip">💡 Escreva os passos em Gherkin, um por linha. <b>Passos</b>: linhas "Dado / E / Quando". <b>Resultado esperado</b>: linhas "Então / E". Nunca coloque senha, CPF ou nome de aluno real.</div>
+<div id="list"></div>
+<div class="bar">
+<button class="btn sec" onclick="add()">+ Adicionar cenário</button>
+<button class="btn sec" onclick="add(EX)">+ Adicionar exemplo</button>
+<label style="display:flex;align-items:center;gap:8px;margin:0;font-weight:600">Idioma do seu Jira <select id="lang" style="width:auto"><option value="pt">Português</option><option value="en">English</option></select></label>
+<button class="btn pri" onclick="download()">Baixar CSV</button>
+</div>
+</div>
+<script>
+// Cabeçalhos do CSV = nomes dos campos no Zephyr, para o mapeamento sair automático.
+// Se algum campo não mapear sozinho, troque aqui o texto pelo nome exato que aparece no Zephyr.
+const HEAD={
+ pt:{Name:'Nome',Objective:'Objetivo',Priority:'Prioridade',Status:'Status',Labels:'Rótulos',Coverage:'Cobertura',Folder:'Pasta',Precondition:'Pré-condição',Step:'Script de teste (passos) - Passo','Expected Result':'Script de teste (passos) - Resultado esperado'},
+ en:{Name:'Name',Objective:'Objective',Priority:'Priority',Status:'Status',Labels:'Labels',Coverage:'Coverage',Folder:'Folder',Precondition:'Precondition',Step:'Test Script (Steps) - Step','Expected Result':'Test Script (Steps) - Expected Result'}};
+const F=[['Name','Nome do cenário','obrigatório · comece com um verbo','input',1],
+['Objective','Objetivo','o que este teste garante','input',1],
+['Priority','Prioridade','','sel:High,Normal,Low'],
+['Status','Status','Draft = novo · Approved = revisado','sel:Draft,Approved'],
+['Labels','Label','','sel:,smoke,regressao,automatizado,manual'],
+['Coverage','Coverage','chave da história no Jira, ex.: QSCO-1234','input'],
+['Folder','Subpasta','opcional · deixe vazio para usar a pasta escolhida na importação','input',1],
+['Precondition','Pré-condição','ambiente, usuário de teste, estado da massa','text',1],
+['Step','Passos (Dado / Quando)','um passo por linha','text',1],
+['Expected Result','Resultado esperado (Então)','','text',1]];
+const EX={Name:'Fazer a prova online de 1ª chamada',Objective:'Garantir que o aluno consegue fazer e finalizar a prova dentro do período de prova.',Priority:'High',Status:'Draft',Labels:'smoke',Coverage:'',Folder:'',
+Precondition:'Ambiente stage gamma\nAluno de teste com disciplina "Cursando" e dentro do período de prova',
+Step:'Dado que estou logado no AVA com um aluno dentro do período de prova\nQuando acesso a prova online da disciplina\nE respondo todas as questões\nE finalizo a prova',
+'Expected Result':'Então a prova aparece como realizada\nE a pontuação da prova é considerada na pontuação da disciplina'};
+let n=0;
+function add(v={}){n++;const c=document.createElement('div');c.className='card';c.innerHTML='<div class="head"><h2>Cenário</h2><button class="del" onclick="this.closest(\'.card\').remove();ren()">Remover</button></div><div class="grid"></div>';
+const g=c.querySelector('.grid');
+for(const [k,l,h,t,full] of F){const d=document.createElement('div');if(full||t==='text')d.className='full';
+let el;if(t.startsWith('sel:')){el=document.createElement('select');for(const o of t.slice(4).split(','))el.add(new Option(o||'(nenhuma)',o));}
+else if(t==='text'){el=document.createElement('textarea');}else{el=document.createElement('input');}
+el.dataset.k=k;if(v[k]!==undefined)el.value=v[k];
+d.innerHTML='<label>'+l+(h?' <small>· '+h+'</small>':'')+'</label>';d.appendChild(el);g.appendChild(d);}
+document.getElementById('list').appendChild(c);ren();}
+function ren(){document.querySelectorAll('.card h2').forEach((h,i)=>h.textContent='Cenário '+(i+1));}
+function q(s){s=String(s??'');return /[",\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}
+function download(){const cards=[...document.querySelectorAll('#list .card')];let ok=true;const rows=[];
+for(const c of cards){const r={};c.querySelectorAll('[data-k]').forEach(e=>{r[e.dataset.k]=e.value.trim();e.classList.remove('err')});
+if(!r.Name){ok=false;c.querySelector('[data-k="Name"]').classList.add('err');}rows.push(r);}
+if(!rows.length){alert('Adicione pelo menos um cenário.');return}
+if(!ok){alert('Preencha o nome de todos os cenários (campo em laranja).');return}
+const cols=F.map(f=>f[0]);const lang=document.getElementById('lang').value;const csv=[cols.map(k=>q(HEAD[lang][k])).join(',')].concat(rows.map(r=>cols.map(k=>q(r[k])).join(','))).join('\r\n');
+const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+const d=new Date().toISOString().slice(0,10);a.download='cenarios-zephyr-'+d+'.csv';a.click();}
+add();
+</script></body></html>
