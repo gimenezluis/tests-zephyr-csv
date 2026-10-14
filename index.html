@@ -16,8 +16,24 @@
 .nav b{color:var(--acc);min-width:18px}
 .nav .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .nav .empty{color:var(--muted);font-style:italic}
+.nav .t{flex:1}
+.st{flex:none;width:16px;height:16px;align-self:center}
+.st.ok{color:var(--acc)}.st.dr{color:#9aa3af}
 .side .btn{width:100%;padding:8px 10px;font-size:13px}
 .card.flash{box-shadow:0 0 0 3px var(--acc)}
+.pad h2{font-size:17px;margin:0 0 2px}.pad p{margin:0 0 12px;color:var(--muted);font-size:13px}
+.tags{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tag{display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;background:#fff;overflow:hidden}
+.tag span{padding:0 4px 0 10px;color:var(--muted);font-weight:600}
+.tag input{border:0;width:130px;padding:8px 4px;outline:none}
+.tag button{border:0;background:none;color:var(--warn);cursor:pointer;font-size:16px;padding:0 10px;height:100%}
+.prev{margin-top:10px;font-size:13px;color:var(--muted)}.prev b{color:var(--ink)}
+.namebox{display:flex;align-items:stretch;border:1px solid var(--line);border-radius:8px;background:#fff;overflow:hidden}
+.namebox input{border:0;border-radius:0}
+.namebox:focus-within{outline:2px solid #b9dcc6}
+.pfx{display:flex;align-items:center;padding:0 10px;background:var(--acc2);color:var(--acc);font-weight:700;white-space:nowrap;font-size:14px}
+.pfx[hidden]{display:none}
+.namebox.err{border-color:var(--warn)}
 .card{scroll-margin-top:16px;transition:box-shadow .3s}
 @media(max-width:900px){.layout{grid-template-columns:1fr}.side{position:static;max-height:240px}}h1{font-size:24px;margin:0 0 4px}p.sub{color:var(--muted);margin:0 0 20px}
 .steps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}.steps span{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:6px 12px;font-size:13px}
@@ -42,6 +58,12 @@ textarea{min-height:90px;font-family:ui-monospace,Consolas,monospace;font-size:1
 <div class="layout">
 <aside class="side"><h3>Acesso rápido <span id="count">0</span></h3><ul class="nav" id="nav"></ul><button class="btn sec" onclick="add({},true)">+ Novo cenário</button></aside>
 <main>
+<div class="card pad">
+<h2>Padrão de nome <small style="font-weight:400;color:var(--muted)">· opcional</small></h2>
+<p>Tags que entram automaticamente no início do nome de todos os cenários, inclusive dos que já foram criados. Ex.: APAV e Mobile viram <b>[APAV][Mobile]</b>.</p>
+<div class="tags"><div id="tags" class="tags"></div><button class="btn sec" onclick="addTag()">+ Adicionar tag de nome</button></div>
+<div class="prev" id="prev" hidden>Os nomes vão ficar assim: <b id="prevTxt"></b></div>
+</div>
 <div id="list"></div>
 <div class="bar">
 <button class="btn sec" onclick="add({},true)">+ Adicionar mais um cenário</button>
@@ -75,15 +97,28 @@ const g=c.querySelector('.grid');
 for(const [k,l,h,t,full] of F){const d=document.createElement('div');if(full||t==='text')d.className='full';
 let el;if(t.startsWith('sel:')){el=document.createElement('select');for(const o of t.slice(4).split(','))el.add(new Option(o||'(nenhuma)',o));}
 else if(t==='text'){el=document.createElement('textarea');}else{el=document.createElement('input');}
-el.dataset.k=k;if(k==='Name')el.addEventListener('input',nav);const val=v[k]!==undefined?v[k]:DEF[k];if(val!==undefined)el.value=val;
-d.innerHTML='<label>'+l+(h?' <small>· '+h+'</small>':'')+'</label>';d.appendChild(el);g.appendChild(d);}
-document.getElementById('list').appendChild(c);obs.observe(c);ren();if(go)ir(c.id,true);}
+el.dataset.k=k;if(k==='Name')el.addEventListener('input',nav);if(k==='Status')el.addEventListener('change',nav);const val=v[k]!==undefined?v[k]:DEF[k];if(val!==undefined)el.value=val;
+d.innerHTML='<label>'+l+(h?' <small>· '+h+'</small>':'')+'</label>';if(k==='Name'){const nb=document.createElement('div');nb.className='namebox';const px=document.createElement('span');px.className='pfx';nb.append(px,el);d.appendChild(nb);}else d.appendChild(el);g.appendChild(d);}
+document.getElementById('list').appendChild(c);obs.observe(c);aplicarPrefixo();if(go)ir(c.id,true);}
 function ren(){document.querySelectorAll('#list .card h2').forEach((h,i)=>h.textContent='Cenário '+(i+1));nav();}
 // Acesso rápido: lista lateral com os cenários criados
 function esc(t){return t.replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
 function nav(){const cards=[...document.querySelectorAll('#list .card')];document.getElementById('count').textContent=cards.length;
-document.getElementById('nav').innerHTML=cards.map((c,i)=>{const nm=c.querySelector('[data-k="Name"]').value.trim();
-return '<li><button data-id="'+c.id+'" onclick="ir(this.dataset.id)" title="'+esc(nm||'Sem nome')+'"><b>'+(i+1)+'</b><span class="t'+(nm?'':' empty')+'">'+esc(nm||'Sem nome')+'</span></button></li>'}).join('');marcar(atual);}
+document.getElementById('nav').innerHTML=cards.map((c,i)=>{const nm=nomeCompleto(c.querySelector('[data-k="Name"]').value.trim());
+return '<li><button data-id="'+c.id+'" onclick="ir(this.dataset.id)" title="'+esc(nm||'Sem nome')+'"><b>'+(i+1)+'</b><span class="t'+(nm?'':' empty')+'">'+esc(nm||'Sem nome')+'</span>'+icone(c.querySelector('[data-k="Status"]').value)+'</button></li>'}).join('');marcar(atual);}
+// Ícone do status: check verde = Aprovado · lápis cinza = Rascunho
+function icone(st){return st==='Approved'
+?'<svg class="st ok" viewBox="0 0 16 16" role="img" aria-label="Aprovado"><title>Aprovado</title><circle cx="8" cy="8" r="7.5" fill="currentColor"/><path d="M4.5 8.2l2.3 2.3 4.7-4.8" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+:'<svg class="st dr" viewBox="0 0 16 16" role="img" aria-label="Rascunho"><title>Rascunho</title><path d="M10.8 2.2l3 3-8.3 8.3-3.7.7.7-3.7z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M9.3 3.7l3 3" stroke="currentColor" stroke-width="1.5"/></svg>';}
+// Padrão de nome: tags [XXX] no início do nome de todos os cenários
+function addTag(v=''){const t=document.createElement('div');t.className='tag';
+t.innerHTML='<span>[</span><input placeholder="ex.: APAV" maxlength="30"><span style="padding:0 6px 0 2px">]</span><button title="Remover tag" onclick="this.parentNode.remove();aplicarPrefixo()">×</button>';
+const i=t.querySelector('input');i.value=v;i.addEventListener('input',()=>{i.value=i.value.replace(/[\[\]]/g,'');aplicarPrefixo();});
+document.getElementById('tags').appendChild(t);i.focus();aplicarPrefixo();}
+function prefixo(){return [...document.querySelectorAll('#tags input')].map(i=>i.value.trim()).filter(Boolean).map(t=>'['+t+']').join('');}
+function nomeCompleto(nm){const p=prefixo();return p&&nm?p+' '+nm:nm;}
+function aplicarPrefixo(){const p=prefixo();document.querySelectorAll('.pfx').forEach(s=>{s.textContent=p;s.hidden=!p;});
+document.getElementById('prev').hidden=!p;document.getElementById('prevTxt').textContent=p+' Nome do cenário';ren();}
 function ir(id,foco){const c=document.getElementById(id);if(!c)return;c.scrollIntoView({behavior:'smooth',block:'start'});
 c.classList.add('flash');setTimeout(()=>c.classList.remove('flash'),900);
 const nm=c.querySelector('[data-k="Name"]');if(foco||!nm.value)setTimeout(()=>nm.focus({preventScroll:true}),350);}
@@ -94,8 +129,8 @@ const vis=new Map();const obs=new IntersectionObserver(es=>{es.forEach(e=>vis.se
 let best=null,max=0;document.querySelectorAll('#list .card').forEach(c=>{const r=vis.get(c.id)||0;if(r>max){max=r;best=c.id}});if(best)marcar(best);},{threshold:[0,.25,.5,.75,1]});
 function q(s){s=String(s??'');return /[",\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}
 function download(){const cards=[...document.querySelectorAll('#list .card')];let ok=true;const rows=[];
-for(const c of cards){const r={};c.querySelectorAll('[data-k]').forEach(e=>{r[e.dataset.k]=e.value.trim();e.classList.remove('err')});
-if(!r.Name){ok=false;c.querySelector('[data-k="Name"]').classList.add('err');}rows.push(r);}
+for(const c of cards){const r={};c.querySelectorAll('[data-k]').forEach(e=>{r[e.dataset.k]=e.value.trim();e.classList.remove('err')});c.querySelector('.namebox').classList.remove('err');
+if(!r.Name){ok=false;c.querySelector('[data-k="Name"]').classList.add('err');c.querySelector('.namebox').classList.add('err');}else r.Name=nomeCompleto(r.Name);rows.push(r);}
 if(!rows.length){alert('Adicione pelo menos um cenário.');return}
 if(!ok){const e=document.querySelector('#list .err');if(e)ir(e.closest('.card').id,true);alert('Preencha o nome de todos os cenários (campo em laranja).');return}
 const cols=F.map(f=>f[0]);const lang=document.getElementById('lang').value;const csv=[cols.map(k=>q(HEAD[lang][k])).join(',')].concat(rows.map(r=>cols.map(k=>q(r[k])).join(','))).join('\r\n');
