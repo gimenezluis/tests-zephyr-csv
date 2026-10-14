@@ -4,7 +4,22 @@
 <style>
 :root{--bg:#f6f5f0;--card:#fff;--ink:#14213d;--muted:#5a6475;--line:#dce0e6;--acc:#2f7a4d;--acc2:#e3f1e8;--warn:#b4561a}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,Segoe UI,Roboto,Arial,sans-serif;padding:24px 16px}
-.wrap{max-width:980px;margin:0 auto}h1{font-size:24px;margin:0 0 4px}p.sub{color:var(--muted);margin:0 0 20px}
+.wrap{max-width:1240px;margin:0 auto}
+.layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:20px;align-items:start}
+.side{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.side h3{font-size:14px;margin:0 0 10px;display:flex;justify-content:space-between;align-items:center}
+.side h3 span{background:var(--acc2);color:var(--acc);border-radius:10px;padding:1px 8px;font-size:12px}
+.nav{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:4px}
+.nav button{width:100%;text-align:left;background:none;border:1px solid transparent;border-radius:8px;padding:7px 9px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer;display:flex;gap:8px;align-items:baseline}
+.nav button:hover{background:var(--bg)}
+.nav button.on{background:var(--acc2);border-color:#b9dcc6}
+.nav b{color:var(--acc);min-width:18px}
+.nav .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav .empty{color:var(--muted);font-style:italic}
+.side .btn{width:100%;padding:8px 10px;font-size:13px}
+.card.flash{box-shadow:0 0 0 3px var(--acc)}
+.card{scroll-margin-top:16px;transition:box-shadow .3s}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.side{position:static;max-height:240px}}h1{font-size:24px;margin:0 0 4px}p.sub{color:var(--muted);margin:0 0 20px}
 .steps{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}.steps span{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:6px 12px;font-size:13px}
 .steps b{color:var(--acc)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px}
@@ -24,11 +39,16 @@ textarea{min-height:90px;font-family:ui-monospace,Consolas,monospace;font-size:1
 <p class="sub">Preencha os cenários, clique em <b>Baixar CSV</b> e importe no Zephyr. Sem Excel e sem conversão.</p>
 <div class="steps"><span><b>1</b> Preencher</span><span><b>2</b> Baixar CSV</span><span><b>3</b> Zephyr › Test Cases › More › Import from File › Excel CSV</span><span><b>4</b> UTF-8 · separador vírgula · os campos já vêm mapeados</span></div>
 <div class="tip">💡 Escreva os passos em Gherkin, um por linha. <b>Passos</b>: linhas "Dado / E / Quando". <b>Resultado esperado</b>: linhas "Então / E". Nunca coloque senha, CPF ou nome de aluno real.</div>
+<div class="layout">
+<aside class="side"><h3>Acesso rápido <span id="count">0</span></h3><ul class="nav" id="nav"></ul><button class="btn sec" onclick="add({},true)">+ Novo cenário</button></aside>
+<main>
 <div id="list"></div>
 <div class="bar">
-<button class="btn sec" onclick="add()">+ Adicionar mais um cenário</button>
+<button class="btn sec" onclick="add({},true)">+ Adicionar mais um cenário</button>
 <label style="display:flex;align-items:center;gap:8px;margin:0;font-weight:600">Idioma do seu Jira <select id="lang" style="width:auto"><option value="pt">Português</option><option value="en">English</option></select></label>
 <button class="btn pri" onclick="download()">Baixar CSV</button>
+</div>
+</main>
 </div>
 </div>
 <script>
@@ -50,21 +70,34 @@ const F=[['Name','Nome do cenário','obrigatório · comece com um verbo','input
 // Valores padrão de um cenário novo
 const DEF={Priority:'Normal',Status:'Draft'};
 let n=0;
-function add(v={}){n++;const c=document.createElement('div');c.className='card';c.innerHTML='<div class="head"><h2>Cenário</h2><button class="del" onclick="this.closest(\'.card\').remove();ren()">Remover</button></div><div class="grid"></div>';
+function add(v={},go=false){n++;const c=document.createElement('div');c.className='card';c.id='cen-'+n;c.innerHTML='<div class="head"><h2>Cenário</h2><button class="del" onclick="const c=this.closest(\'.card\');obs.unobserve(c);c.remove();ren()">Remover</button></div><div class="grid"></div>';
 const g=c.querySelector('.grid');
 for(const [k,l,h,t,full] of F){const d=document.createElement('div');if(full||t==='text')d.className='full';
 let el;if(t.startsWith('sel:')){el=document.createElement('select');for(const o of t.slice(4).split(','))el.add(new Option(o||'(nenhuma)',o));}
 else if(t==='text'){el=document.createElement('textarea');}else{el=document.createElement('input');}
-el.dataset.k=k;const val=v[k]!==undefined?v[k]:DEF[k];if(val!==undefined)el.value=val;
+el.dataset.k=k;if(k==='Name')el.addEventListener('input',nav);const val=v[k]!==undefined?v[k]:DEF[k];if(val!==undefined)el.value=val;
 d.innerHTML='<label>'+l+(h?' <small>· '+h+'</small>':'')+'</label>';d.appendChild(el);g.appendChild(d);}
-document.getElementById('list').appendChild(c);ren();}
-function ren(){document.querySelectorAll('.card h2').forEach((h,i)=>h.textContent='Cenário '+(i+1));}
+document.getElementById('list').appendChild(c);obs.observe(c);ren();if(go)ir(c.id,true);}
+function ren(){document.querySelectorAll('#list .card h2').forEach((h,i)=>h.textContent='Cenário '+(i+1));nav();}
+// Acesso rápido: lista lateral com os cenários criados
+function esc(t){return t.replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
+function nav(){const cards=[...document.querySelectorAll('#list .card')];document.getElementById('count').textContent=cards.length;
+document.getElementById('nav').innerHTML=cards.map((c,i)=>{const nm=c.querySelector('[data-k="Name"]').value.trim();
+return '<li><button data-id="'+c.id+'" onclick="ir(this.dataset.id)" title="'+esc(nm||'Sem nome')+'"><b>'+(i+1)+'</b><span class="t'+(nm?'':' empty')+'">'+esc(nm||'Sem nome')+'</span></button></li>'}).join('');marcar(atual);}
+function ir(id,foco){const c=document.getElementById(id);if(!c)return;c.scrollIntoView({behavior:'smooth',block:'start'});
+c.classList.add('flash');setTimeout(()=>c.classList.remove('flash'),900);
+const nm=c.querySelector('[data-k="Name"]');if(foco||!nm.value)setTimeout(()=>nm.focus({preventScroll:true}),350);}
+let atual=null;
+function marcar(id){atual=id;document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.id===id));
+const on=document.querySelector('#nav button.on');if(on)on.scrollIntoView({block:'nearest'});}
+const vis=new Map();const obs=new IntersectionObserver(es=>{es.forEach(e=>vis.set(e.target.id,e.intersectionRatio));
+let best=null,max=0;document.querySelectorAll('#list .card').forEach(c=>{const r=vis.get(c.id)||0;if(r>max){max=r;best=c.id}});if(best)marcar(best);},{threshold:[0,.25,.5,.75,1]});
 function q(s){s=String(s??'');return /[",\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}
 function download(){const cards=[...document.querySelectorAll('#list .card')];let ok=true;const rows=[];
 for(const c of cards){const r={};c.querySelectorAll('[data-k]').forEach(e=>{r[e.dataset.k]=e.value.trim();e.classList.remove('err')});
 if(!r.Name){ok=false;c.querySelector('[data-k="Name"]').classList.add('err');}rows.push(r);}
 if(!rows.length){alert('Adicione pelo menos um cenário.');return}
-if(!ok){alert('Preencha o nome de todos os cenários (campo em laranja).');return}
+if(!ok){const e=document.querySelector('#list .err');if(e)ir(e.closest('.card').id,true);alert('Preencha o nome de todos os cenários (campo em laranja).');return}
 const cols=F.map(f=>f[0]);const lang=document.getElementById('lang').value;const csv=[cols.map(k=>q(HEAD[lang][k])).join(',')].concat(rows.map(r=>cols.map(k=>q(r[k])).join(','))).join('\r\n');
 const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
 const d=new Date().toISOString().slice(0,10);a.download='cenarios-zephyr-'+d+'.csv';a.click();}
