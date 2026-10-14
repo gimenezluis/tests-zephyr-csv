@@ -26,8 +26,7 @@ textarea{min-height:90px;font-family:ui-monospace,Consolas,monospace;font-size:1
 <div class="tip">💡 Escreva os passos em Gherkin, um por linha. <b>Passos</b>: linhas "Dado / E / Quando". <b>Resultado esperado</b>: linhas "Então / E". Nunca coloque senha, CPF ou nome de aluno real.</div>
 <div id="list"></div>
 <div class="bar">
-<button class="btn sec" onclick="add()">+ Adicionar cenário</button>
-<button class="btn sec" onclick="add(EX)">+ Adicionar exemplo</button>
+<button class="btn sec" onclick="add()">+ Adicionar mais um cenário</button>
 <label style="display:flex;align-items:center;gap:8px;margin:0;font-weight:600">Idioma do seu Jira <select id="lang" style="width:auto"><option value="pt">Português</option><option value="en">English</option></select></label>
 <button class="btn pri" onclick="download()">Baixar CSV</button>
 </div>
@@ -48,10 +47,6 @@ const F=[['Name','Nome do cenário','obrigatório · comece com um verbo','input
 ['Precondition','Pré-condição','ambiente, usuário de teste, estado da massa','text',1],
 ['Step','Passos (Dado / Quando)','um passo por linha','text',1],
 ['Expected Result','Resultado esperado (Então)','','text',1]];
-const EX={Name:'Fazer a prova online de 1ª chamada',Objective:'Garantir que o aluno consegue fazer e finalizar a prova dentro do período de prova.',Priority:'Normal',Status:'Draft',Labels:'smoke',Coverage:'',Folder:'',
-Precondition:'Ambiente stage gamma\nAluno de teste com disciplina "Cursando" e dentro do período de prova',
-Step:'Dado que estou logado no AVA com um aluno dentro do período de prova\nQuando acesso a prova online da disciplina\nE respondo todas as questões\nE finalizo a prova',
-'Expected Result':'Então a prova aparece como realizada\nE a pontuação da prova é considerada na pontuação da disciplina'};
 // Valores padrão de um cenário novo
 const DEF={Priority:'Normal',Status:'Draft'};
 let n=0;
