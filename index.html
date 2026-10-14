@@ -54,13 +54,13 @@ textarea{min-height:90px;font-family:ui-monospace,Consolas,monospace;font-size:1
 <h1>Gerador de cenários de teste para o Zephyr</h1>
 <p class="sub">Preencha os cenários, clique em <b>Baixar CSV</b> e importe no Zephyr. Sem Excel e sem conversão.</p>
 <div class="steps"><span><b>1</b> Preencher</span><span><b>2</b> Baixar CSV</span><span><b>3</b> Zephyr › Test Cases › More › Import from File › Excel CSV</span><span><b>4</b> UTF-8 · separador vírgula · os campos já vêm mapeados</span></div>
-<div class="tip">💡 Escreva os passos em Gherkin, um por linha. <b>Passos</b>: linhas "Dado / E / Quando". <b>Resultado esperado</b>: linhas "Então / E". Nunca coloque senha, CPF ou nome de aluno real.</div>
+<div class="tip">💡 Escreva os passos em Gherkin, um por linha. <b>Passos</b>: linhas "Dado / E / Quando". <b>Resultado esperado</b>: linhas "Então / E". Nunca coloque senhas ou dados pessoais reais.</div>
 <div class="layout">
 <aside class="side"><h3>Acesso rápido <span id="count">0</span></h3><ul class="nav" id="nav"></ul><button class="btn sec" onclick="add({},true)">+ Novo cenário</button></aside>
 <main>
 <div class="card pad">
 <h2>Padrão de nome <small style="font-weight:400;color:var(--muted)">· opcional</small></h2>
-<p>Tags que entram automaticamente no início do nome de todos os cenários, inclusive dos que já foram criados. Ex.: APAV e Mobile viram <b>[APAV][Mobile]</b>.</p>
+<p>Tags que entram automaticamente no início do nome de todos os cenários, inclusive dos que já foram criados. Ex.: Manual e Mobile viram <b>[Manual][Mobile]</b>.</p>
 <div class="tags"><div id="tags" class="tags"></div><button class="btn sec" onclick="addTag()">+ Adicionar tag de nome</button></div>
 <div class="prev" id="prev" hidden>Os nomes vão ficar assim: <b id="prevTxt"></b></div>
 </div>
@@ -84,7 +84,7 @@ const F=[['Name','Nome do cenário','obrigatório · comece com um verbo','input
 ['Priority','Prioridade','','sel:High,Normal,Low'],
 ['Status','Status','Draft = novo · Approved = revisado','sel:Draft,Approved'],
 ['Labels','Label','','sel:,smoke,regressao,automatizado,manual'],
-['Coverage','Coverage','chave da história no Jira, ex.: QSCO-1234','input'],
+['Coverage','Coverage','chave da história no Jira, ex.: PROJ-123','input'],
 ['Folder','Subpasta','opcional · deixe vazio para usar a pasta escolhida na importação','input',1],
 ['Precondition','Pré-condição','ambiente, usuário de teste, estado da massa','text',1],
 ['Step','Passos (Dado / Quando)','um passo por linha','text',1],
@@ -112,7 +112,7 @@ function icone(st){return st==='Approved'
 :'<svg class="st dr" viewBox="0 0 16 16" role="img" aria-label="Rascunho"><title>Rascunho</title><path d="M10.8 2.2l3 3-8.3 8.3-3.7.7.7-3.7z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M9.3 3.7l3 3" stroke="currentColor" stroke-width="1.5"/></svg>';}
 // Padrão de nome: tags [XXX] no início do nome de todos os cenários
 function addTag(v=''){const t=document.createElement('div');t.className='tag';
-t.innerHTML='<span>[</span><input placeholder="ex.: APAV" maxlength="30"><span style="padding:0 6px 0 2px">]</span><button title="Remover tag" onclick="this.parentNode.remove();aplicarPrefixo()">×</button>';
+t.innerHTML='<span>[</span><input placeholder="ex.: Manual" maxlength="30"><span style="padding:0 6px 0 2px">]</span><button title="Remover tag" onclick="this.parentNode.remove();aplicarPrefixo()">×</button>';
 const i=t.querySelector('input');i.value=v;i.addEventListener('input',()=>{i.value=i.value.replace(/[\[\]]/g,'');aplicarPrefixo();});
 document.getElementById('tags').appendChild(t);i.focus();aplicarPrefixo();}
 function prefixo(){return [...document.querySelectorAll('#tags input')].map(i=>i.value.trim()).filter(Boolean).map(t=>'['+t+']').join('');}

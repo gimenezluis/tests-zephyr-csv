@@ -18,7 +18,7 @@ Página web simples para criar cenários de teste (em Gherkin) e baixar um **CSV
 
 **Evidências:** não entram pela importação. Anexe os prints na execução do teste, dentro do Test Cycle. Padrão de nome: `{chave-do-teste}_{ambiente}_{AAAA-MM-DD}.png`.
 
-> Nunca coloque senha, CPF ou nome de aluno real nos cenários.
+> Nunca coloque senhas ou dados pessoais reais nos cenários.
 
 ## Rodar localmente
 
@@ -47,7 +47,7 @@ Os cabeçalhos ficam no topo do `index.html`, no objeto `HEAD`. Se algum campo n
 | Prioridade | Priority | Não | High, Normal, Low (padrão: Normal) |
 | Status | Status | Não | Draft, Approved |
 | Rótulos | Labels | Não | smoke, regressao, automatizado, manual |
-| Cobertura (Itens de trabalho) | Coverage | Não | Chave da história no Jira (ex.: QSCO-1234) |
+| Cobertura (Itens de trabalho) | Coverage | Não | Chave da história no Jira (ex.: PROJ-123) |
 | Pasta | Folder | Não | Subpasta. Vazio = pasta escolhida na importação |
 | Precondição | Precondition | Não | Ambiente, usuário de teste, estado da massa |
 | Script de Teste (Passo-a-Passo) - Passo | Test Script (Steps) - Step | Não | Passos "Dado / E / Quando", um por linha |
@@ -57,4 +57,4 @@ Referência: [Zephyr – Import test cases](https://support.smartbear.com/zephyr
 
 ## Responsável
 
-Squad Avaliação · {contato} · {canal}
+{time} · {contato} · {canal}
