@@ -44,14 +44,14 @@ Os cabeçalhos ficam no topo do `index.html`, no objeto `HEAD`. Se algum campo n
 |---|---|---|---|
 | Nome | Name | Sim | Nome do cenário |
 | Objetivo | Objective | Não | O que o teste garante |
-| Prioridade | Priority | Não | High, Normal, Low |
+| Prioridade | Priority | Não | High, Normal, Low (padrão: Normal) |
 | Status | Status | Não | Draft, Approved |
 | Rótulos | Labels | Não | smoke, regressao, automatizado, manual |
-| Cobertura | Coverage | Não | Chave da história no Jira (ex.: QSCO-1234) |
+| Cobertura (Itens de trabalho) | Coverage | Não | Chave da história no Jira (ex.: QSCO-1234) |
 | Pasta | Folder | Não | Subpasta. Vazio = pasta escolhida na importação |
-| Pré-condição | Precondition | Não | Ambiente, usuário de teste, estado da massa |
-| Script de teste (passos) - Passo | Test Script (Steps) - Step | Não | Passos "Dado / E / Quando", um por linha |
-| Script de teste (passos) - Resultado esperado | Test Script (Steps) - Expected Result | Não | Linhas "Então / E" |
+| Precondição | Precondition | Não | Ambiente, usuário de teste, estado da massa |
+| Script de Teste (Passo-a-Passo) - Passo | Test Script (Steps) - Step | Não | Passos "Dado / E / Quando", um por linha |
+| Script de Teste (Passo-a-Passo) - Resultado Esperado | Test Script (Steps) - Expected Result | Não | Linhas "Então / E" |
 
 Referência: [Zephyr – Import test cases](https://support.smartbear.com/zephyr/docs/en/test-cases/import-test-cases.html)
 
