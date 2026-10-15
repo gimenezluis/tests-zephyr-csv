@@ -1,0 +1,147 @@
+/* ==========================================================================
+   Gerador de Cenários Zephyr · estilos
+   Paleta baseada na identidade visual Cogna (kroton.com.br).
+   Para mudar cores, altere só as variáveis do :root.
+   ========================================================================== */
+
+:root {
+  --bg: #F7F8F9;       /* fundo da página */
+  --card: #FFFFFF;     /* fundo dos cards */
+  --ink: #2D3135;      /* texto principal */
+  --title: #28114B;    /* títulos e topo */
+  --deep: #180B2C;     /* rodapé */
+  --muted: #5C6066;    /* texto secundário */
+  --line: #E3DFEA;     /* bordas */
+  --acc: #5219A1;      /* roxo principal */
+  --acc2: #F3EDFD;     /* roxo claro (fundos de destaque) */
+  --acc3: #D9C6FB;     /* roxo claro (bordas de destaque) */
+  --amber: #FFAD01;    /* botão principal */
+  --warn: #C62828;     /* erros e remover */
+  --soft: #4A3F66;     /* texto sobre fundo roxo claro */
+}
+
+/* --- Base ---------------------------------------------------------------- */
+* { box-sizing: border-box; }
+body {
+  margin: 0; min-height: 100vh; display: flex; flex-direction: column;
+  background: var(--bg); color: var(--ink);
+  font: 15px/1.5 'Poppins', -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+h2, h3 { color: var(--title); }
+label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+label small { font-weight: 400; color: var(--muted); }
+input, select, textarea {
+  width: 100%; padding: 8px 10px; font: inherit; color: var(--ink);
+  background: #fff; border: 1px solid var(--line); border-radius: 8px;
+}
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--acc3); border-color: var(--acc); }
+textarea { min-height: 90px; font-family: ui-monospace, Consolas, monospace; font-size: 13px; }
+.err { border-color: var(--warn) !important; }
+
+/* --- Estrutura da página -------------------------------------------------- */
+.wrap { width: 100%; max-width: 1240px; margin: 0 auto; padding: 24px 16px; }
+.page { flex: 1; }
+
+.top { background: linear-gradient(120deg, var(--title) 0%, var(--acc) 100%); color: #fff; }
+.top .wrap { padding: 28px 16px; }
+.top .brand { margin: 0 0 6px; font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--amber); }
+.top h1 { margin: 0 0 4px; font-size: 26px; font-weight: 700; color: #fff; }
+.top .sub { margin: 0; color: #E6DAFB; }
+.top .sub b { color: #fff; }
+
+.foot { background: var(--deep); color: #C9C2D6; font-size: 12.5px; }
+.foot .wrap { padding: 18px 16px; display: flex; flex-wrap: wrap; gap: 6px 20px; justify-content: space-between; }
+.foot b { color: #fff; font-weight: 600; }
+
+.steps { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.steps span { padding: 6px 12px; font-size: 13px; background: var(--card); border: 1px solid var(--line); border-radius: 20px; }
+.steps b { color: var(--acc); }
+.tip { margin-bottom: 16px; padding: 12px 14px; font-size: 14px; background: var(--acc2); border-left: 4px solid var(--amber); border-radius: 10px; }
+
+.layout { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 20px; align-items: start; }
+
+/* --- Botões ---------------------------------------------------------------- */
+.btn { padding: 10px 16px; font-size: 14px; font-weight: 600; border: 0; border-radius: 8px; cursor: pointer; }
+.btn-primary { background: var(--amber); color: var(--deep); }
+.btn-primary:hover { background: #F4A200; }
+.btn-secondary { background: #fff; color: var(--ink); border: 1px solid var(--line); }
+.btn-secondary:hover { background: var(--acc2); border-color: var(--acc3); }
+.btn-small { padding: 6px 12px; font-size: 13px; margin-bottom: 6px; }
+.btn-link-danger { background: none; border: 0; color: var(--warn); font-weight: 600; cursor: pointer; }
+
+/* --- Acesso rápido (lateral) ---------------------------------------------- */
+.side { position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow: auto; padding: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; }
+.side h3 { margin: 0 0 10px; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
+.side h3 span { padding: 1px 8px; font-size: 12px; color: var(--acc); background: var(--acc2); border-radius: 10px; }
+.side .btn { width: 100%; padding: 8px 10px; font-size: 13px; }
+.nav { list-style: none; margin: 0 0 10px; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.nav button {
+  width: 100%; display: flex; gap: 8px; align-items: baseline; padding: 7px 9px;
+  font: inherit; font-size: 13px; text-align: left; color: var(--ink);
+  background: none; border: 1px solid transparent; border-radius: 8px; cursor: pointer;
+}
+.nav button:hover { background: var(--bg); }
+.nav button.on { background: var(--acc2); border-color: var(--acc3); }
+.nav b { min-width: 18px; color: var(--acc); }
+.nav .t { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nav .empty { color: var(--muted); font-style: italic; }
+.st { flex: none; width: 16px; height: 16px; align-self: center; }
+.st.ok { color: var(--acc); }
+.st.dr { color: #9AA3AF; }
+
+/* --- Cards ------------------------------------------------------------------ */
+.card { margin-bottom: 16px; padding: 18px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; scroll-margin-top: 16px; transition: box-shadow .3s; }
+.card.flash { box-shadow: 0 0 0 3px var(--acc); }
+.card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.card-head h2 { margin: 0; font-size: 17px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.full { grid-column: 1 / -1; }
+
+/* --- Padrões para todos os cenários --------------------------------------- */
+.defaults h2 { margin: 0 0 2px; font-size: 17px; }
+.defaults h2 small { font-size: 14px; font-weight: 400; color: var(--muted); }
+.defaults h3 { margin: 12px 0 2px; font-size: 14px; }
+.defaults p { margin: 0 0 12px; color: var(--muted); font-size: 13px; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.tag { display: flex; align-items: center; overflow: hidden; background: #fff; border: 1px solid var(--line); border-radius: 8px; }
+.tag span { padding: 0 4px 0 10px; color: var(--muted); font-weight: 600; }
+.tag span:last-of-type { padding: 0 6px 0 2px; }
+.tag input { width: 130px; padding: 8px 4px; border: 0; outline: none; }
+.tag button { height: 100%; padding: 0 10px; font-size: 16px; color: var(--warn); background: none; border: 0; cursor: pointer; }
+.preview { margin-top: 10px; font-size: 13px; color: var(--muted); }
+.preview b { color: var(--ink); }
+
+/* --- Nome com prefixo das tags -------------------------------------------- */
+.namebox { display: flex; align-items: stretch; overflow: hidden; background: #fff; border: 1px solid var(--line); border-radius: 8px; }
+.namebox:focus-within { outline: 2px solid var(--acc3); }
+.namebox input { border: 0; border-radius: 0; }
+.namebox.err { border-color: var(--warn); }
+.prefix { display: flex; align-items: center; padding: 0 10px; font-size: 14px; font-weight: 700; white-space: nowrap; color: var(--acc); background: var(--acc2); }
+.prefix[hidden] { display: none; }
+
+/* --- Campo em destaque (subpasta) ----------------------------------------- */
+.highlight { padding: 12px 14px; background: var(--acc2); border-left: 4px solid var(--acc); border-radius: 8px; }
+.highlight label { font-size: 14px; color: var(--acc); }
+.highlight label small, .highlight small, .lock { color: var(--soft); }
+.highlight input { font-weight: 600; border-color: var(--acc3); }
+.highlight input[readonly] { color: var(--muted); background: #F4F1F9; }
+.global { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
+.global .check { display: flex; align-items: center; gap: 8px; margin: 0; cursor: pointer; }
+.global .check input { width: 16px; height: 16px; accent-color: var(--acc); }
+.global small { font-size: 12px; }
+.global input:disabled { color: #9AA3AF; background: #F3F4F5; }
+.lock { margin-top: 4px; font-size: 12px; }
+
+/* --- Barra de ações ---------------------------------------------------------- */
+.actions { position: sticky; bottom: 0; display: flex; flex-wrap: wrap; gap: 10px; padding: 12px 0; background: var(--bg); }
+.actions label { display: flex; align-items: center; gap: 8px; margin: 0; }
+.actions select { width: auto; }
+
+/* --- Responsivo ---------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .side { position: static; max-height: 240px; }
+}
+@media (max-width: 640px) {
+  .grid { grid-template-columns: 1fr; }
+}
