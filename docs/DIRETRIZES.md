@@ -12,7 +12,7 @@ Regras para criar casos de teste com o Gerador de Cenários Zephyr.
 
 - **Um comportamento por cenário.**
 - **Nome:** verbo no infinitivo e objetivo claro (ex.: *Validar bloqueio após três tentativas de login*).
-- **Gherkin em português:** `Dado` (contexto) · `Quando` (ação) · `Então` (resultado).
+- **Gherkin com palavras-chave em inglês** (exigência do Zephyr) e texto em português: `Given` (contexto) · `When` (ação) · `Then` (resultado) · `And` (continuação).
 - **Resultado esperado** verificável na tela ou na resposta, sem termos vagos como "funciona corretamente".
 - **Tags do nome:** use apenas as tags acordadas pelo time (ex.: tipo de teste e plataforma).
 
@@ -21,7 +21,7 @@ Regras para criar casos de teste com o Gerador de Cenários Zephyr.
 | Campo | Regra |
 |---|---|
 | Prioridade | **High:** fluxo crítico ou smoke · **Normal:** padrão · **Low:** baixo impacto |
-| Label | **smoke:** validação mínima após deploy · **regressao:** suíte de regressão · **automatizado:** já coberto por automação · **manual:** execução manual |
+| Label | Texto livre. Padrão sugerido: **smoke:** validação mínima após deploy · **regressao:** suíte de regressão · **automatizado:** já coberto por automação · **manual:** execução manual |
 | Coverage | Obrigatório: chave da história ou bug que o cenário cobre |
 
 ## Organização no Zephyr

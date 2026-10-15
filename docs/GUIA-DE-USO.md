@@ -17,11 +17,11 @@ Cada card é um caso de teste. Use **+ Adicionar mais um cenário** para criar o
 | Objetivo | O que o teste garante |
 | Prioridade | High, Normal (padrão) ou Low |
 | Status | Draft (padrão) ou Approved |
-| Label | smoke, regressao, automatizado ou manual |
+| Label | Texto livre (ex.: `smoke`, `regressao`, `manual`) |
 | Coverage | Chave da história no Jira (ex.: `PROJ-123`) |
 | Subpasta: ID da tarefa | ID da tarefa, se não foi definido para todos |
 | Pré-condição | Ambiente, usuário de teste e estado dos dados |
-| Cenário BDD (Gherkin) | Um passo por linha: `Dado` · `Quando` · `Então`, com `E` para continuar. Vai para o campo **Script de Teste (BDD)** do Zephyr |
+| Cenário BDD | Clique em **+ Inserir estrutura Given / When / Then** e complete. Um passo por linha, começando com `Given`, `When`, `And` ou `Then`. Vai para o campo **Script de Teste (BDD)** do Zephyr |
 
 > ⚠️ A página não salva o conteúdo. Baixe o CSV antes de fechar ou recarregar a aba.
 
@@ -44,3 +44,4 @@ Selecione o **idioma do seu Jira** (Português ou English) e clique em **Baixar 
 | "Formato de arquivo não suportado" | Envie o `.csv`, não um `.xlsx` |
 | Campo vem como "Nenhum" no mapeamento | Selecione o campo de mesmo nome e avise o responsável pela ferramenta |
 | Acentuação incorreta | Use a codificação **Unicode (UTF-8)** |
+| BDD não aparece no Zephyr | As linhas precisam começar com `Given`, `When`, `And` ou `Then` (Dado, Quando, E e Então são convertidos automaticamente) |

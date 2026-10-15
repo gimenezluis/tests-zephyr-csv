@@ -38,6 +38,7 @@ Tipos em `F`: `'input'` (uma linha), `'text'` (várias linhas), `'sel:A,B,C'` (l
 | `addTag()` / `prefixo()` / `aplicarPrefixo()` | Tags do nome |
 | `aplicarPasta()` | Subpasta única para todos os cenários |
 | `q()` | Protege valores do CSV (aspas, vírgulas, quebras de linha) |
+| `btnBDD()` / `bddEN()` | Botão que insere a estrutura Given / When / Then e conversão das palavras-chave para o inglês |
 | `download()` | Valida, monta o CSV (UTF-8, vírgula) e baixa o arquivo |
 
 ## Ajustes comuns
@@ -45,7 +46,9 @@ Tipos em `F`: `'input'` (uma linha), `'text'` (várias linhas), `'sel:A,B,C'` (l
 | Ajuste | Onde |
 |---|---|
 | Campo não mapeia no Zephyr | Corrigir o texto em `HEAD` com o nome exato do campo no Zephyr |
-| Nova opção numa lista | Acrescentar na linha correspondente de `F` (ex.: `sel:,smoke,regressao,…`) |
+| Nova opção numa lista | Acrescentar na linha correspondente de `F` (ex.: `sel:High,Normal,Low`) |
+| Estrutura inicial do BDD | Constante `ESTRUTURA` |
+| Palavras-chave convertidas no BDD | Objeto `KW` (português → Given / When / And / Then / But) |
 | Mudar valor padrão | `DEF` |
 | Nova coluna | Adicionar linha em `F` **e** a chave em `HEAD.pt` e `HEAD.en` |
 | Remover coluna | Remover a linha em `F` |

@@ -34,6 +34,8 @@
 .pfx{display:flex;align-items:center;padding:0 10px;background:var(--acc2);color:var(--acc);font-weight:700;white-space:nowrap;font-size:14px}
 .pfx[hidden]{display:none}
 .namebox.err{border-color:var(--warn)}
+
+.mini{padding:6px 12px;font-size:13px;margin-bottom:6px}
 .destaque{background:var(--acc2);border-left:4px solid var(--acc);border-radius:8px;padding:12px 14px}
 .destaque label{font-size:14px;color:var(--acc)}
 .destaque label small{color:#3f5a4a}
@@ -66,7 +68,7 @@ textarea{min-height:90px;font-family:ui-monospace,Consolas,monospace;font-size:1
 <h1>Gerador de cenários de teste para o Zephyr</h1>
 <p class="sub">Preencha os cenários, clique em <b>Baixar CSV</b> e importe no Zephyr. Sem Excel e sem conversão.</p>
 <div class="steps"><span><b>1</b> Preencher</span><span><b>2</b> Baixar CSV</span><span><b>3</b> Zephyr › Test Cases › More › Import from File › Excel CSV</span><span><b>4</b> UTF-8 · separador vírgula · os campos já vêm mapeados</span></div>
-<div class="tip">💡 Escreva o cenário em Gherkin, um passo por linha: <b>Dado</b> (contexto) · <b>Quando</b> (ação) · <b>Então</b> (resultado), usando <b>E</b> para continuar. Ele vai para o campo <b>Script de Teste (BDD)</b> do Zephyr. Nunca coloque senhas ou dados pessoais reais.</div>
+<div class="tip">💡 No <b>Cenário BDD</b>, use <b>+ Inserir estrutura Given / When / Then</b> e escreva um passo por linha: <b>Given</b> (contexto) · <b>When</b> (ação) · <b>Then</b> (resultado) · <b>And</b> para continuar. O Zephyr só aceita essas palavras-chave; se escrever Dado, Quando, Então ou E, o CSV converte sozinho. Nunca coloque senhas ou dados pessoais reais.</div>
 <div class="layout">
 <aside class="side"><h3>Acesso rápido <span id="count">0</span></h3><ul class="nav" id="nav"></ul><button class="btn sec" onclick="add({},true)">+ Novo cenário</button></aside>
 <main>
@@ -101,11 +103,11 @@ const F=[['Name','Nome do cenário','obrigatório · comece com um verbo','input
 ['Objective','Objetivo','o que este teste garante','input',1],
 ['Priority','Prioridade','','sel:High,Normal,Low'],
 ['Status','Status','Draft = novo · Approved = revisado','sel:Draft,Approved'],
-['Labels','Label','','sel:,smoke,regressao,automatizado,manual'],
+['Labels','Label','texto livre, ex.: smoke, regressao, manual','input'],
 ['Coverage','Coverage','chave da história no Jira, ex.: PROJ-123','input'],
 ['Folder','📁 Subpasta: ID da tarefa','informe o ID da tarefa do Jira; os cenários ficam numa subpasta com esse nome dentro da pasta escolhida na importação','input',1],
 ['Precondition','Pré-condição','ambiente, usuário de teste, estado da massa','text',1],
-['BDD','Cenário BDD (Gherkin)','um passo por linha: Dado · E · Quando · Então','text',1]];
+['BDD','Cenário BDD','um passo por linha, começando com Given · When · And · Then','text',1]];
 // Valores padrão de um cenário novo
 const DEF={Priority:'Normal',Status:'Draft'};
 let n=0;
@@ -115,8 +117,8 @@ for(const [k,l,h,t,full] of F){const d=document.createElement('div');if(full||t=
 if(k==='Folder')d.classList.add('destaque');
 let el;if(t.startsWith('sel:')){el=document.createElement('select');for(const o of t.slice(4).split(','))el.add(new Option(o||'(nenhuma)',o));}
 else if(t==='text'){el=document.createElement('textarea');}else{el=document.createElement('input');}
-el.dataset.k=k;if(k==='BDD'){el.placeholder='Dado que estou logado com um usuário de teste\nQuando acesso a tela de relatórios\nE filtro pelo mês atual\nEntão vejo a lista de relatórios do mês';el.style.minHeight='170px';}if(k==='Folder'){el.placeholder='Tarefa-ID';el.addEventListener('input',()=>{el.value=el.value.replace(/[\\/]/g,'')});}if(k==='Name')el.addEventListener('input',nav);if(k==='Status')el.addEventListener('change',nav);const val=v[k]!==undefined?v[k]:DEF[k];if(val!==undefined)el.value=val;
-d.innerHTML='<label>'+l+(h?' <small>· '+h+'</small>':'')+'</label>';if(k==='Name'){const nb=document.createElement('div');nb.className='namebox';const px=document.createElement('span');px.className='pfx';nb.append(px,el);d.appendChild(nb);}else d.appendChild(el);g.appendChild(d);}
+el.dataset.k=k;if(k==='BDD'){el.placeholder='Given que estou logado com um usuário de teste\nWhen acesso a tela de relatórios\nAnd filtro pelo mês atual\nThen vejo a lista de relatórios do mês';el.style.minHeight='170px';}if(k==='Folder'){el.placeholder='Tarefa-ID';el.addEventListener('input',()=>{el.value=el.value.replace(/[\\/]/g,'')});}if(k==='Name')el.addEventListener('input',nav);if(k==='Status')el.addEventListener('change',nav);const val=v[k]!==undefined?v[k]:DEF[k];if(val!==undefined)el.value=val;
+d.innerHTML='<label>'+l+(h?' <small>· '+h+'</small>':'')+'</label>';if(k==='Name'){const nb=document.createElement('div');nb.className='namebox';const px=document.createElement('span');px.className='pfx';nb.append(px,el);d.appendChild(nb);}else{if(k==='BDD')d.appendChild(btnBDD(el));d.appendChild(el);}g.appendChild(d);}
 if(c.querySelector('.destaque'))c.querySelector('.destaque').insertAdjacentHTML('beforeend','<div class="lock" hidden>🔒 Definida no topo para todos os cenários</div>');
 document.getElementById('list').appendChild(c);obs.observe(c);aplicarPasta();aplicarPrefixo();if(go)ir(c.id,true);}
 function ren(){document.querySelectorAll('#list .card h2').forEach((h,i)=>h.textContent='Cenário '+(i+1));nav();}
@@ -143,6 +145,13 @@ function aplicarPasta(){const on=document.getElementById('usarPasta').checked;co
 const v=g.value.trim();document.querySelectorAll('#list .card').forEach(c=>{const el=c.querySelector('[data-k="Folder"]');const lk=c.querySelector('.lock');
 if(on){if(el.dataset.locked!=='1'){el.dataset.own=el.value;el.dataset.locked='1';}el.value=v;el.readOnly=true;lk.hidden=false;}
 else{if(el.dataset.locked==='1'){el.value=el.dataset.own||'';el.dataset.locked='';}el.readOnly=false;lk.hidden=true;}});}
+// BDD: o Zephyr aceita só Given / When / And / Then (e But)
+const ESTRUTURA='Given \nWhen \nThen ';
+function btnBDD(el){const b=document.createElement('button');b.type='button';b.className='btn sec mini';b.textContent='+ Inserir estrutura Given / When / Then';
+b.onclick=()=>{if(el.value.trim()&&!confirm('Substituir o texto atual pela estrutura Given / When / Then?'))return;el.value=ESTRUTURA;el.focus();el.setSelectionRange(6,6);};return b;}
+// Converte palavras-chave em português no início da linha (Dado, Quando, E, Então, Mas) para o inglês
+const KW={dado:'Given',dada:'Given',dados:'Given',dadas:'Given',quando:'When','então':'Then',entao:'Then',e:'And',mas:'But'};
+function bddEN(t){return t.split('\n').map(l=>l.replace(/^(\s*)(Dados?|Dadas?|Quando|Então|Entao|E|Mas)(?=\s)/i,(m,sp,k)=>sp+KW[k.toLowerCase()])).join('\n');}
 function ir(id,foco){const c=document.getElementById(id);if(!c)return;c.scrollIntoView({behavior:'smooth',block:'start'});
 c.classList.add('flash');setTimeout(()=>c.classList.remove('flash'),900);
 const nm=c.querySelector('[data-k="Name"]');if(foco||!nm.value)setTimeout(()=>nm.focus({preventScroll:true}),350);}
@@ -154,7 +163,7 @@ let best=null,max=0;document.querySelectorAll('#list .card').forEach(c=>{const r
 function q(s){s=String(s??'');return /[",\n\r]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}
 function download(){const cards=[...document.querySelectorAll('#list .card')];let ok=true;const rows=[];
 for(const c of cards){const r={};c.querySelectorAll('[data-k]').forEach(e=>{r[e.dataset.k]=e.value.trim();e.classList.remove('err')});c.querySelector('.namebox').classList.remove('err');
-if(!r.Name){ok=false;c.querySelector('[data-k="Name"]').classList.add('err');c.querySelector('.namebox').classList.add('err');}else r.Name=nomeCompleto(r.Name);rows.push(r);}
+if(!r.Name){ok=false;c.querySelector('[data-k="Name"]').classList.add('err');c.querySelector('.namebox').classList.add('err');}else r.Name=nomeCompleto(r.Name);if(r.BDD)r.BDD=bddEN(r.BDD);rows.push(r);}
 if(!rows.length){alert('Adicione pelo menos um cenário.');return}
 if(!ok){const e=document.querySelector('#list .err');if(e)ir(e.closest('.card').id,true);alert('Preencha o nome de todos os cenários (campo em laranja).');return}
 const cols=F.map(f=>f[0]);const lang=document.getElementById('lang').value;const csv=[cols.map(k=>q(HEAD[lang][k])).join(',')].concat(rows.map(r=>cols.map(k=>q(r[k])).join(','))).join('\r\n');
