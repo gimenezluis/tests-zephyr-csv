@@ -14,20 +14,18 @@ Aplicação web para escrever casos de teste em Gherkin e gerar um **CSV pronto 
 | [Guia de uso](docs/GUIA-DE-USO.md) | Como criar os cenários e importar no Zephyr |
 | [Diretrizes de uso](docs/DIRETRIZES.md) | Regras da empresa: dados permitidos, padrões, revisão e evidências |
 | [Desenvolvimento](docs/DESENVOLVIMENTO.md) | Tecnologia, estrutura do código e como fazer ajustes |
-| [Publicação](docs/PUBLICACAO.md) | Como a aplicação é publicada e mantida |
+| [Publicação](docs/PUBLICACAO.md) | Como a aplicação é publicada, quem acessa e como manter |
 
 ## Tecnologia
 
-HTML, CSS e JavaScript puro em um único arquivo. Sem dependências e sem build. Publicação pelo GitHub Pages via GitHub Actions; `Dockerfile` (nginx) disponível como alternativa.
+HTML, CSS e JavaScript puro em um único arquivo. Sem dependências e sem build. Publicação pelo GitHub Pages **privado** via GitHub Actions: só acessa quem faz login no GitHub da organização (SSO com a conta da empresa).
 
 ## Estrutura
 
 ```
 ├── index.html                    # aplicação
 ├── docs/                         # documentação
-├── .github/workflows/pages.yml   # publicação no GitHub Pages
-├── Dockerfile                    # opcional: execução em container
-└── nginx.conf                    # opcional: configuração do container
+└── .github/workflows/pages.yml   # publicação no GitHub Pages
 ```
 
 ## Responsável

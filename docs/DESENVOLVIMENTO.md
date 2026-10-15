@@ -5,15 +5,15 @@
 | Item | Escolha |
 |---|---|
 | Código | HTML + CSS + JavaScript puro, em `index.html` |
-| Dependências | Nenhuma |
+| Dependências | Nenhuma (fonte Poppins via Google Fonts; sem acesso, usa a fonte do sistema) |
 | Build | Nenhum: o arquivo editado é o arquivo publicado |
-| Publicação | GitHub Pages via GitHub Actions |
+| Publicação | GitHub Pages privado via GitHub Actions |
 
 ## Estrutura do `index.html`
 
 | Bloco | Conteúdo |
 |---|---|
-| `<style>` | Visual. Cores em variáveis no `:root` (`--acc` verde principal, `--warn` laranja de erro, etc.) |
+| `<style>` | Visual. Cores da identidade Cogna em variáveis no `:root` (`--acc` roxo principal, `--title` roxo escuro, `--amber` amarelo do botão, `--warn` vermelho de erro) |
 | `<body>` | Estrutura da página: padrões, acesso rápido, lista de cenários e botões |
 | `<script>` | Configuração (`HEAD`, `F`, `DEF`) e funções |
 
