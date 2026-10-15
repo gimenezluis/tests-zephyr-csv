@@ -66,7 +66,7 @@ textarea{min-height:90px;font-family:ui-monospace,Consolas,monospace;font-size:1
 <h1>Gerador de cenários de teste para o Zephyr</h1>
 <p class="sub">Preencha os cenários, clique em <b>Baixar CSV</b> e importe no Zephyr. Sem Excel e sem conversão.</p>
 <div class="steps"><span><b>1</b> Preencher</span><span><b>2</b> Baixar CSV</span><span><b>3</b> Zephyr › Test Cases › More › Import from File › Excel CSV</span><span><b>4</b> UTF-8 · separador vírgula · os campos já vêm mapeados</span></div>
-<div class="tip">💡 Escreva os passos em Gherkin, um por linha. <b>Passos</b>: linhas "Dado / E / Quando". <b>Resultado esperado</b>: linhas "Então / E". Nunca coloque senhas ou dados pessoais reais.</div>
+<div class="tip">💡 Escreva o cenário em Gherkin, um passo por linha: <b>Dado</b> (contexto) · <b>Quando</b> (ação) · <b>Então</b> (resultado), usando <b>E</b> para continuar. Ele vai para o campo <b>Script de Teste (BDD)</b> do Zephyr. Nunca coloque senhas ou dados pessoais reais.</div>
 <div class="layout">
 <aside class="side"><h3>Acesso rápido <span id="count">0</span></h3><ul class="nav" id="nav"></ul><button class="btn sec" onclick="add({},true)">+ Novo cenário</button></aside>
 <main>
@@ -95,8 +95,8 @@ textarea{min-height:90px;font-family:ui-monospace,Consolas,monospace;font-size:1
 // Cabeçalhos do CSV = nomes dos campos no Zephyr, para o mapeamento sair automático.
 // Se algum campo não mapear sozinho, troque aqui o texto pelo nome exato que aparece no Zephyr.
 const HEAD={
- pt:{Name:'Nome',Objective:'Objetivo',Priority:'Prioridade',Status:'Status',Labels:'Rótulos',Coverage:'Cobertura (Itens de trabalho)',Folder:'Pasta',Precondition:'Precondição',Step:'Script de Teste (Passo-a-Passo) - Passo','Expected Result':'Script de Teste (Passo-a-Passo) - Resultado Esperado'},
- en:{Name:'Name',Objective:'Objective',Priority:'Priority',Status:'Status',Labels:'Labels',Coverage:'Coverage',Folder:'Folder',Precondition:'Precondition',Step:'Test Script (Steps) - Step','Expected Result':'Test Script (Steps) - Expected Result'}};
+ pt:{Name:'Nome',Objective:'Objetivo',Priority:'Prioridade',Status:'Status',Labels:'Rótulos',Coverage:'Cobertura (Itens de trabalho)',Folder:'Pasta',Precondition:'Precondição',BDD:'Script de Teste (BDD)'},
+ en:{Name:'Name',Objective:'Objective',Priority:'Priority',Status:'Status',Labels:'Labels',Coverage:'Coverage',Folder:'Folder',Precondition:'Precondition',BDD:'Test Script (BDD)'}};
 const F=[['Name','Nome do cenário','obrigatório · comece com um verbo','input',1],
 ['Objective','Objetivo','o que este teste garante','input',1],
 ['Priority','Prioridade','','sel:High,Normal,Low'],
@@ -105,8 +105,7 @@ const F=[['Name','Nome do cenário','obrigatório · comece com um verbo','input
 ['Coverage','Coverage','chave da história no Jira, ex.: PROJ-123','input'],
 ['Folder','📁 Subpasta: ID da tarefa','informe o ID da tarefa do Jira; os cenários ficam numa subpasta com esse nome dentro da pasta escolhida na importação','input',1],
 ['Precondition','Pré-condição','ambiente, usuário de teste, estado da massa','text',1],
-['Step','Passos (Dado / Quando)','um passo por linha','text',1],
-['Expected Result','Resultado esperado (Então)','','text',1]];
+['BDD','Cenário BDD (Gherkin)','um passo por linha: Dado · E · Quando · Então','text',1]];
 // Valores padrão de um cenário novo
 const DEF={Priority:'Normal',Status:'Draft'};
 let n=0;
@@ -116,7 +115,7 @@ for(const [k,l,h,t,full] of F){const d=document.createElement('div');if(full||t=
 if(k==='Folder')d.classList.add('destaque');
 let el;if(t.startsWith('sel:')){el=document.createElement('select');for(const o of t.slice(4).split(','))el.add(new Option(o||'(nenhuma)',o));}
 else if(t==='text'){el=document.createElement('textarea');}else{el=document.createElement('input');}
-el.dataset.k=k;if(k==='Folder'){el.placeholder='Tarefa-ID';el.addEventListener('input',()=>{el.value=el.value.replace(/[\\/]/g,'')});}if(k==='Name')el.addEventListener('input',nav);if(k==='Status')el.addEventListener('change',nav);const val=v[k]!==undefined?v[k]:DEF[k];if(val!==undefined)el.value=val;
+el.dataset.k=k;if(k==='BDD'){el.placeholder='Dado que estou logado com um usuário de teste\nQuando acesso a tela de relatórios\nE filtro pelo mês atual\nEntão vejo a lista de relatórios do mês';el.style.minHeight='170px';}if(k==='Folder'){el.placeholder='Tarefa-ID';el.addEventListener('input',()=>{el.value=el.value.replace(/[\\/]/g,'')});}if(k==='Name')el.addEventListener('input',nav);if(k==='Status')el.addEventListener('change',nav);const val=v[k]!==undefined?v[k]:DEF[k];if(val!==undefined)el.value=val;
 d.innerHTML='<label>'+l+(h?' <small>· '+h+'</small>':'')+'</label>';if(k==='Name'){const nb=document.createElement('div');nb.className='namebox';const px=document.createElement('span');px.className='pfx';nb.append(px,el);d.appendChild(nb);}else d.appendChild(el);g.appendChild(d);}
 if(c.querySelector('.destaque'))c.querySelector('.destaque').insertAdjacentHTML('beforeend','<div class="lock" hidden>🔒 Definida no topo para todos os cenários</div>');
 document.getElementById('list').appendChild(c);obs.observe(c);aplicarPasta();aplicarPrefixo();if(go)ir(c.id,true);}

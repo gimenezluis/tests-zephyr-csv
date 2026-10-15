@@ -21,8 +21,7 @@ Cada card é um caso de teste. Use **+ Adicionar mais um cenário** para criar o
 | Coverage | Chave da história no Jira (ex.: `PROJ-123`) |
 | Subpasta: ID da tarefa | ID da tarefa, se não foi definido para todos |
 | Pré-condição | Ambiente, usuário de teste e estado dos dados |
-| Passos | Linhas `Dado` / `E` / `Quando`, uma por linha |
-| Resultado esperado | Linhas `Então` / `E` |
+| Cenário BDD (Gherkin) | Um passo por linha: `Dado` · `Quando` · `Então`, com `E` para continuar. Vai para o campo **Script de Teste (BDD)** do Zephyr |
 
 > ⚠️ A página não salva o conteúdo. Baixe o CSV antes de fechar ou recarregar a aba.
 
