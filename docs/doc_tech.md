@@ -102,6 +102,7 @@ Pronto: o campo aparece em todos os cenários e vira uma coluna do CSV. Nenhum o
 
 - Alterações por **Pull Request**, com revisão. A `main` é protegida.
 - Mudou `config.js` ou `csv.js`? Rode `node --test` antes do PR. Regra nova em `csv.js` → teste novo em `tests/csv.test.js`.
+- **Segurança:** todo valor do CSV passa por `escaparValor`, que neutraliza fórmulas (`=`, `+`, `@`, `-`) com um apóstrofo para evitar CSV injection se o arquivo for aberto no Excel/Sheets. Na tela, conteúdo do usuário só entra via `value`/`textContent` ou `escapeHtml`.
 - Mantenha regras puras em `csv.js` (sem acessar a tela) e a tela em `app.js`.
 - Sem bibliotecas externas: a ferramenta não tem nada para atualizar e funciona offline (só a fonte Poppins vem do Google Fonts; sem ela, usa a fonte do sistema).
 - Commits: `feat:` novidade · `fix:` correção · `docs:` documentação · `chore:` manutenção. Para desfazer algo publicado: `git revert <commit>` em um novo PR.

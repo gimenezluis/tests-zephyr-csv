@@ -7,9 +7,18 @@
 (function (root) {
   'use strict';
 
-  /** Protege um valor para o CSV: aspas em volta quando tem vírgula, aspas ou quebra de linha. */
+  /**
+   * Evita que o valor vire fórmula se o CSV for aberto no Excel/Sheets (CSV injection):
+   * prefixa com apóstrofo quando começa com =, +, @, tab, \r ou com "-" sem espaço depois.
+   * "- item" (marcador de lista) não é alterado.
+   */
+  function neutralizarFormula(texto) {
+    return /^([=+@\t\r]|-(?!\s))/.test(texto) ? "'" + texto : texto;
+  }
+
+  /** Protege um valor para o CSV: neutraliza fórmulas e põe aspas quando tem vírgula, aspas ou quebra de linha. */
   function escaparValor(valor) {
-    const texto = String(valor ?? '');
+    const texto = neutralizarFormula(String(valor ?? ''));
     return /[",\n\r]/.test(texto) ? '"' + texto.replace(/"/g, '""') + '"' : texto;
   }
 
@@ -54,7 +63,7 @@
     return [cabecalho.join(',')].concat(corpo).join('\r\n');
   }
 
-  const CSV = { escaparValor, montarPrefixo, nomeComPrefixo, limparPasta, bddParaIngles, gerarCSV };
+  const CSV = { neutralizarFormula, escaparValor, montarPrefixo, nomeComPrefixo, limparPasta, bddParaIngles, gerarCSV };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = CSV;
   else root.CSV = CSV;

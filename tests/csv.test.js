@@ -50,6 +50,22 @@ test('escaparValor protege vírgula, aspas e quebra de linha', () => {
   assert.equal(CSV.escaparValor(undefined), '');
 });
 
+test('escaparValor neutraliza fórmulas (CSV injection)', () => {
+  assert.equal(CSV.escaparValor('=1+1'), "'=1+1");
+  assert.equal(CSV.escaparValor('+55 11'), "'+55 11");
+  assert.equal(CSV.escaparValor('@SUM(A1)'), "'@SUM(A1)");
+  assert.equal(CSV.escaparValor('-A1'), "'-A1");
+  assert.equal(CSV.escaparValor('\t=1'), "'\t=1");
+  assert.equal(CSV.escaparValor('=HYPERLINK("http://x","clique")'), '"\'=HYPERLINK(""http://x"",""clique"")"');
+});
+
+test('escaparValor não altera texto comum nem marcador de lista', () => {
+  assert.equal(CSV.escaparValor('- usuário logado'), '- usuário logado');
+  assert.equal(CSV.escaparValor('Validar login'), 'Validar login');
+  assert.equal(CSV.escaparValor('a = b'), 'a = b');
+  assert.equal(CSV.escaparValor(''), '');
+});
+
 test('montarPrefixo junta tags e ignora vazias e colchetes', () => {
   assert.equal(CSV.montarPrefixo(['Manual', ' Mobile ', '']), '[Manual][Mobile]');
   assert.equal(CSV.montarPrefixo(['[Web]']), '[Web]');
