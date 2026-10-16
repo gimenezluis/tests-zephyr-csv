@@ -6,14 +6,14 @@ Página web interna para escrever casos de teste (com BDD) e gerar um **CSV pron
 
 - HTML, CSS e JavaScript puro: sem dependências, sem build, sem backend.
 - Nada é enviado ou armazenado: o CSV é gerado no navegador.
-- Publicado no GitHub Pages **privado** (acesso com o login da empresa).
+- Publicado no GitHub Pages **privado**.
 
 ## Documentação
 
 | Documento | Para quem |
 |---|---|
-| [Guia de uso](docs/GUIA-DE-USO.md) | Quem cria cenários |
-| [Documentação técnica](docs/DOCUMENTACAO-TECNICA.md) | Quem vai ajustar ou evoluir o código |
+| [Guia de uso](docs/guia_uso.md) | Quem cria cenários |
+| [Documentação técnica](docs/doc_tech.md) | Quem vai ajustar ou evoluir o código |
 
 ## Estrutura
 
@@ -28,12 +28,8 @@ Página web interna para escrever casos de teste (com BDD) e gerar um **CSV pron
 └── .github/workflows/pages.yml   # testa e publica no GitHub Pages
 ```
 
-**Incluir ou ajustar um campo:** altere só o `js/config.js`. Detalhes na [documentação técnica](docs/DOCUMENTACAO-TECNICA.md).
+**Incluir ou ajustar um campo:** altere só o `js/config.js`. Detalhes na [documentação técnica](docs/doc_tech.md).
 
 ## Rodar localmente
 
 Abra o `index.html` no navegador. Para os testes: `node --test` (Node 18+).
-
-## Responsável
-
-{time} · {contato} · {canal}
